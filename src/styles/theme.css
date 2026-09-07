@@ -1,0 +1,63 @@
+:root {
+  /* Paleta de marca JCG InfraTech, adaptada a formato dashboard */
+  --bg-page: #0a1826;
+  --bg-surface: #0f2338;
+  --bg-surface-raised: #14304a;
+  --border: rgba(148, 187, 214, 0.14);
+  --border-strong: rgba(148, 187, 214, 0.28);
+
+  --accent: #2dd4e8;
+  --accent-dim: #1a8fa0;
+  --accent-text-on-fill: #05242b;
+
+  --text-primary: #eef5fa;
+  --text-secondary: #9db3c6;
+  --text-muted: #6c8299;
+
+  --success: #5fbf7f;
+  --warning: #e3a83b;
+  --danger: #e2685f;
+
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
