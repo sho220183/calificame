@@ -1,14 +1,6 @@
-export default function Card({ title, action, children, style }) {
+export default function Card({ title, action, children, style, interactive = false }) {
   return (
-    <section
-      style={{
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 'var(--radius-md)',
-        padding: 20,
-        ...style,
-      }}
-    >
+    <section className={`card${interactive ? ' card-interactive' : ''}`} style={style}>
       {(title || action) && (
         <div
           style={{

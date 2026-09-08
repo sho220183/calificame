@@ -8,11 +8,11 @@ satisfacción.
 
 ## Estado actual
 
-Este es el **scaffold inicial**: estructura de carpetas, componentes de UI
-con la identidad de marca de JCG InfraTech (navy/cian), y las tres pantallas
-clave con datos de ejemplo. Todavía **no está conectado a un proyecto real
-de Supabase** — eso lo hacemos en el siguiente paso, cuando confirmes que
-seguimos.
+Proyecto real de Supabase creado y conectado (`calificame`, región
+`sa-east-1`). Login, panel admin (negocios, resumen) y el flujo público de
+escaneo (`/r/:codigo`) ya funcionan contra datos reales. Lo que falta:
+terminar de conectar el panel comercio (Mi QR, Feedback privado, Resumen) y
+construir Planes y facturación.
 
 ## Estructura
 
@@ -76,13 +76,12 @@ Rutas disponibles:
 - `/comercio`, `/comercio/mi-qr`, `/comercio/feedback` — panel del negocio
 - `/r/:codigo` — la página pública que ve el cliente al escanear el QR (encuesta + redirección)
 
-## Pendiente antes de que esto funcione con datos reales
+## Pendiente
 
-1. Crear el proyecto en Supabase y correr `supabase/migrations/0001_init.sql`.
-2. Completar `.env` con `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
-3. Reemplazar los `TODO` marcados en el código (login real, lectura/escritura
-   de negocios, registro de escaneos, guardado de encuesta) por llamadas a
-   Supabase.
-4. ✅ Dominio decidido: `calificame.com.py` — falta registrarlo en NIC.py
+1. Conectar el panel comercio a datos reales: Mi QR (código y umbral del
+   negocio logueado), Feedback privado (leer `respuestas_encuesta`) y
+   Resumen (stats reales) — mismo patrón ya usado en el panel admin.
+2. Construir Planes y facturación (`/admin/planes`), hoy es un placeholder.
+3. ✅ Dominio decidido: `calificame.com.py` — falta registrarlo en NIC.py
    (con el RUC de JCG Infotech) y apuntarlo al hosting una vez que el
    sistema esté listo para producción.

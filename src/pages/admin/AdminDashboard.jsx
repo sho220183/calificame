@@ -4,6 +4,7 @@ import Topbar from '../../components/layout/Topbar.jsx'
 import StatCard from '../../components/ui/StatCard.jsx'
 import Card from '../../components/ui/Card.jsx'
 import { supabase } from '../../lib/supabaseClient.js'
+import { IconStore, IconScan, IconStar } from '../../components/ui/Icon.jsx'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null)
@@ -44,9 +45,9 @@ export default function AdminDashboard() {
   }, [])
 
   const resumen = [
-    { label: 'Negocios activos', value: stats ? stats.negocios : '...' },
-    { label: 'Escaneos este mes', value: stats ? stats.escaneos : '...' },
-    { label: 'Reseñas generadas', value: stats ? stats.resenias : '...' },
+    { label: 'Negocios activos', value: stats ? stats.negocios : '...', icon: IconStore },
+    { label: 'Escaneos este mes', value: stats ? stats.escaneos : '...', icon: IconScan },
+    { label: 'Reseñas generadas', value: stats ? stats.resenias : '...', icon: IconStar },
   ]
 
   return (
@@ -65,9 +66,12 @@ export default function AdminDashboard() {
 
         <Card title="Negocios recientes">
           {negociosRecientes.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-              Todavía no hay negocios cargados. Andá a “Negocios” para dar de alta el primero.
-            </p>
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <IconStore size={26} style={{ color: 'var(--text-muted)', marginBottom: 10 }} />
+              <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: 0 }}>
+                Todavía no hay negocios cargados. Andá a “Negocios” para dar de alta el primero.
+              </p>
+            </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {negociosRecientes.map((n) => (
@@ -77,12 +81,12 @@ export default function AdminDashboard() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     fontSize: 14,
-                    padding: '6px 0',
+                    padding: '10px 2px',
                     borderBottom: '1px solid var(--border)',
                   }}
                 >
                   <span>{n.nombre}</span>
-                  <span style={{ color: 'var(--text-secondary)' }}>{n.plan}</span>
+                  <span className="badge badge-neutral">{n.plan}</span>
                 </div>
               ))}
             </div>

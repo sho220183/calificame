@@ -3,6 +3,7 @@ import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 import Topbar from '../../components/layout/Topbar.jsx'
 import Card from '../../components/ui/Card.jsx'
 import { supabase } from '../../lib/supabaseClient.js'
+import { IconStore } from '../../components/ui/Icon.jsx'
 
 export default function Negocios() {
   const [negocios, setNegocios] = useState([])
@@ -73,27 +74,35 @@ export default function Negocios() {
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               placeholder="Nombre del negocio"
-              style={inputStyle}
+              className="field"
+              style={{ flex: 1 }}
             />
-            <select value={plan} onChange={(e) => setPlan(e.target.value)} style={inputStyle}>
+            <select value={plan} onChange={(e) => setPlan(e.target.value)} className="field" style={{ flex: '0 0 140px' }}>
               <option value="basico">Básico</option>
               <option value="pro">Pro</option>
               <option value="premium">Premium</option>
             </select>
-            <button type="submit" style={buttonStyle}>
+            <button type="submit" className="btn btn-primary">
               Crear
             </button>
           </form>
-          {error && <p style={{ color: 'var(--danger)', fontSize: 13, marginTop: 10 }}>{error}</p>}
+          {error && <p role="alert" style={{ color: 'var(--danger)', fontSize: 13, marginTop: 10 }}>{error}</p>}
         </Card>
 
         <Card title={`Negocios cargados (${negocios.length})`}>
           {cargando ? (
-            <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Cargando...</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="skeleton" style={{ height: 34 }} />
+              ))}
+            </div>
           ) : negocios.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-              Todavía no cargaste ningún negocio.
-            </p>
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <IconStore size={26} style={{ color: 'var(--text-muted)', marginBottom: 10 }} />
+              <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: 0 }}>
+                Todavía no cargaste ningún negocio.
+              </p>
+            </div>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
               <thead>
@@ -107,8 +116,12 @@ export default function Negocios() {
                 {negocios.map((n) => (
                   <tr key={n.id} style={{ borderTop: '1px solid var(--border)' }}>
                     <td style={tdStyle}>{n.nombre}</td>
-                    <td style={tdStyle}>{n.plan}</td>
-                    <td style={tdStyle}>/r/{n.codigo}</td>
+                    <td style={tdStyle}>
+                      <span className="badge badge-neutral">{n.plan}</span>
+                    </td>
+                    <td className="tabular-nums" style={{ ...tdStyle, color: 'var(--text-secondary)' }}>
+                      /r/{n.codigo}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -118,27 +131,6 @@ export default function Negocios() {
       </div>
     </DashboardLayout>
   )
-}
-
-const inputStyle = {
-  background: 'var(--bg-surface-raised)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-sm)',
-  padding: '9px 12px',
-  color: 'var(--text-primary)',
-  fontSize: 14,
-  flex: 1,
-}
-
-const buttonStyle = {
-  background: 'var(--accent)',
-  color: 'var(--accent-text-on-fill)',
-  border: 'none',
-  borderRadius: 'var(--radius-sm)',
-  padding: '9px 16px',
-  fontSize: 14,
-  fontWeight: 600,
-  cursor: 'pointer',
 }
 
 const thStyle = { padding: '8px 6px', fontWeight: 500 }

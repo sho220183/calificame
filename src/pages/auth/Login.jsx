@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase, supabaseConfigured } from '../../lib/supabaseClient.js'
+import { LogoMark, IconShield, IconTrendUp, IconQr } from '../../components/ui/Icon.jsx'
+
+const PROPUESTAS = [
+  { Icon: IconQr, texto: 'Un QR en el mostrador conecta cada visita con una encuesta de satisfacción en segundos.' },
+  { Icon: IconTrendUp, texto: 'Las buenas calificaciones van directo a Google, así crecen tus reseñas públicas.' },
+  { Icon: IconShield, texto: 'Las críticas quedan en privado, para que las resuelvas antes de que se publiquen.' },
+]
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -33,79 +40,125 @@ export default function Login() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--bg-page)',
-        color: 'var(--text-primary)',
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
+    <div style={{ minHeight: '100dvh', display: 'flex', color: 'var(--text-primary)' }}>
+      <section
         style={{
-          width: 320,
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 'var(--radius-lg)',
-          padding: 28,
+          flex: 1,
+          display: 'none',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '48px 56px',
+          background:
+            'radial-gradient(720px circle at 20% 15%, rgba(34, 195, 214, 0.16), transparent 60%), var(--bg-surface-sunken)',
+          borderRight: '1px solid var(--border)',
+        }}
+        className="login-brand-panel"
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <LogoMark size={30} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 19, fontWeight: 600 }}>
+            Calific<span style={{ color: 'var(--accent)' }}>ame</span>
+          </span>
+        </div>
+
+        <div style={{ maxWidth: 380 }}>
+          <h2 style={{ fontSize: 28, lineHeight: 1.25, marginBottom: 28 }}>
+            El QR de tu mostrador, convertido en reseñas.
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {PROPUESTAS.map(({ Icon, texto }) => (
+              <div key={texto} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'var(--accent-soft)',
+                    color: 'var(--accent)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Icon size={16} />
+                </div>
+                <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', margin: 0, maxWidth: 280 }}>
+                  {texto}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>
+          Un producto de JCG Infotech · calificame.com.py
+        </p>
+      </section>
+
+      <section
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--bg-page)',
+          padding: 24,
         }}
       >
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, marginBottom: 4 }}>
-          Calific<span style={{ color: 'var(--accent)' }}>ame</span>
-        </div>
-        <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
-          Ingresá a tu panel
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={fieldStyle}
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={fieldStyle}
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              marginTop: 6,
-              background: 'var(--accent)',
-              color: 'var(--accent-text-on-fill)',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '10px 0',
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: loading ? 'default' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-          {error && (
-            <p style={{ color: 'var(--danger)', fontSize: 13, marginTop: 2 }}>{error}</p>
-          )}
-        </div>
-      </form>
+        <form onSubmit={handleSubmit} className="card fade-in-up" style={{ width: 340, padding: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }} className="login-mark-mobile">
+            <LogoMark size={22} />
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600 }}>
+              Calific<span style={{ color: 'var(--accent)' }}>ame</span>
+            </span>
+          </div>
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 22, marginTop: 10 }}>
+            Ingresá a tu panel
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Email</span>
+              <input
+                type="email"
+                placeholder="Email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="field"
+                required
+              />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Contraseña</span>
+              <input
+                type="password"
+                placeholder="Contraseña"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="field"
+                required
+              />
+            </label>
+            <button type="submit" disabled={loading} className="btn btn-primary btn-block" style={{ marginTop: 8 }}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+            {error && (
+              <p role="alert" style={{ color: 'var(--danger)', fontSize: 13, marginTop: 2 }}>
+                {error}
+              </p>
+            )}
+          </div>
+        </form>
+      </section>
+
+      <style>{`
+        @media (min-width: 860px) {
+          .login-brand-panel { display: flex !important; }
+          .login-mark-mobile { display: none; }
+        }
+      `}</style>
     </div>
   )
-}
-
-const fieldStyle = {
-  background: 'var(--bg-surface-raised)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-sm)',
-  padding: '10px 12px',
-  color: 'var(--text-primary)',
-  fontSize: 14,
 }

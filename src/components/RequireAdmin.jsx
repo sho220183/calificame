@@ -6,7 +6,17 @@ export default function RequireAdmin({ children }) {
 
   if (loading) {
     return (
-      <div style={{ padding: 40, color: 'var(--text-secondary)' }}>Cargando...</div>
+      <div
+        style={{
+          minHeight: '100dvh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--bg-page)',
+        }}
+      >
+        <div className="skeleton" style={{ width: 160, height: 14, borderRadius: 'var(--radius-sm)' }} />
+      </div>
     )
   }
 

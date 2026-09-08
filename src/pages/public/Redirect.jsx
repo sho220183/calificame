@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient.js'
+import { LogoMark, IconCheck, IconAlert } from '../../components/ui/Icon.jsx'
 
 // Página pública que recibe al cliente cuando escanea el QR físico.
 // Flujo: busca el negocio por su código (vía función pública acotada) ->
@@ -64,12 +65,19 @@ export default function Redirect() {
   }
 
   if (negocio === undefined) {
-    return <PantallaCentrada><p style={{ fontSize: 14 }}>Cargando...</p></PantallaCentrada>
+    return (
+      <PantallaCentrada>
+        <div className="skeleton" style={{ width: 48, height: 48, borderRadius: '50%', margin: '0 auto 16px' }} />
+        <div className="skeleton" style={{ width: '70%', height: 14, margin: '0 auto 8px' }} />
+        <div className="skeleton" style={{ width: '50%', height: 14, margin: '0 auto' }} />
+      </PantallaCentrada>
+    )
   }
 
   if (negocio === null) {
     return (
       <PantallaCentrada>
+        <IconAlert size={30} style={{ color: 'var(--warning)', marginBottom: 12 }} />
         <p style={{ fontSize: 15 }}>Este enlace no corresponde a ningún negocio activo.</p>
       </PantallaCentrada>
     )
@@ -78,38 +86,38 @@ export default function Redirect() {
   return (
     <PantallaCentrada>
       {calificacion === null && (
-        <>
-          <h1 style={{ fontSize: 20, marginBottom: 8 }}>¿Qué tan satisfecho estás?</h1>
-          <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
+        <div className="fade-in-up">
+          <h1 style={{ fontSize: 21, marginBottom: 8 }}>¿Qué tan satisfecho estás?</h1>
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 24 }}>
             Tu opinión nos ayuda a mejorar
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
             {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                onClick={() => enviarCalificacion(n)}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  border: '1px solid var(--border-strong)',
-                  background: 'var(--bg-surface)',
-                  color: 'var(--text-primary)',
-                  fontSize: 16,
-                  cursor: 'pointer',
-                }}
-              >
+              <button key={n} onClick={() => enviarCalificacion(n)} className="rating-btn" aria-label={`Calificar ${n} de 5`}>
                 {n}
               </button>
             ))}
           </div>
-        </>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 11.5,
+              color: 'var(--text-muted)',
+              marginTop: 10,
+              padding: '0 4px',
+            }}
+          >
+            <span>Muy mal</span>
+            <span>Excelente</span>
+          </div>
+        </div>
       )}
 
       {calificacion !== null && calificacion < negocio.umbral_calificacion && !enviado && (
-        <form onSubmit={enviarFeedback}>
-          <h1 style={{ fontSize: 20, marginBottom: 8 }}>Contanos qué pasó</h1>
-          <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
+        <form onSubmit={enviarFeedback} className="fade-in-up">
+          <h1 style={{ fontSize: 21, marginBottom: 8 }}>Contanos qué pasó</h1>
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 16 }}>
             Esto lo ve directamente el negocio, no se publica
           </p>
           <textarea
@@ -117,38 +125,35 @@ export default function Redirect() {
             onChange={(e) => setComentario(e.target.value)}
             rows={4}
             placeholder="Contanos qué se puede mejorar..."
-            style={{
-              width: '100%',
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--text-primary)',
-              padding: 12,
-              fontSize: 14,
-              fontFamily: 'inherit',
-            }}
+            className="field"
+            style={{ fontFamily: 'inherit', resize: 'vertical' }}
           />
-          <button
-            type="submit"
-            style={{
-              marginTop: 12,
-              width: '100%',
-              background: 'var(--accent)',
-              color: 'var(--accent-text-on-fill)',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '10px 0',
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
+          <button type="submit" className="btn btn-primary btn-block" style={{ marginTop: 14 }}>
             Enviar
           </button>
         </form>
       )}
 
-      {enviado && <p style={{ fontSize: 15 }}>Gracias por tu comentario.</p>}
+      {enviado && (
+        <div className="fade-in-up">
+          <div
+            style={{
+              width: 46,
+              height: 46,
+              borderRadius: '50%',
+              background: 'var(--success-soft)',
+              color: 'var(--success)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 14px',
+            }}
+          >
+            <IconCheck size={22} />
+          </div>
+          <p style={{ fontSize: 15 }}>Gracias por tu comentario.</p>
+        </div>
+      )}
     </PantallaCentrada>
   )
 }
@@ -157,16 +162,22 @@ function PantallaCentrada({ children }) {
   return (
     <div
       style={{
-        minHeight: '100vh',
-        background: 'var(--bg-page)',
+        minHeight: '100dvh',
+        background:
+          'radial-gradient(600px circle at 50% 0%, rgba(34, 195, 214, 0.08), transparent 60%), var(--bg-page)',
         color: 'var(--text-primary)',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 24,
       }}
     >
       <div style={{ maxWidth: 380, width: '100%', textAlign: 'center' }}>{children}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 32, opacity: 0.6 }}>
+        <LogoMark size={16} />
+        <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>Calificame</span>
+      </div>
     </div>
   )
 }
