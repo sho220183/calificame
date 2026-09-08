@@ -1,16 +1,54 @@
+import { useEffect, useState } from 'react'
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 import Topbar from '../../components/layout/Topbar.jsx'
 import StatCard from '../../components/ui/StatCard.jsx'
 import Card from '../../components/ui/Card.jsx'
-
-// Datos de ejemplo — se reemplazan por consultas a Supabase una vez creado el proyecto.
-const resumen = [
-  { label: 'Negocios activos', value: '0', trend: null },
-  { label: 'Escaneos este mes', value: '0', trend: null },
-  { label: 'Reseñas generadas', value: '0', trend: null },
-]
+import { supabase } from '../../lib/supabaseClient.js'
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState(null)
+  const [negociosRecientes, setNegociosRecientes] = useState([])
+
+  useEffect(() => {
+    async function cargar() {
+      const inicioMes = new Date()
+      inicioMes.setDate(1)
+      inicioMes.setHours(0, 0, 0, 0)
+
+      const [negociosRes, escaneosRes, respuestasRes, recientesRes] = await Promise.all([
+        supabase.from('negocios').select('id', { count: 'exact', head: true }),
+        supabase
+          .from('escaneos')
+          .select('id', { count: 'exact', head: true })
+          .gte('creado_en', inicioMes.toISOString()),
+        supabase
+          .from('respuestas_encuesta')
+          .select('id', { count: 'exact', head: true })
+          .eq('redirigido_publico', true)
+          .gte('creado_en', inicioMes.toISOString()),
+        supabase
+          .from('negocios')
+          .select('id, nombre, plan, creado_en')
+          .order('creado_en', { ascending: false })
+          .limit(5),
+      ])
+
+      setStats({
+        negocios: negociosRes.count ?? 0,
+        escaneos: escaneosRes.count ?? 0,
+        resenias: respuestasRes.count ?? 0,
+      })
+      setNegociosRecientes(recientesRes.data ?? [])
+    }
+    cargar()
+  }, [])
+
+  const resumen = [
+    { label: 'Negocios activos', value: stats ? stats.negocios : '...' },
+    { label: 'Escaneos este mes', value: stats ? stats.escaneos : '...' },
+    { label: 'Reseñas generadas', value: stats ? stats.resenias : '...' },
+  ]
+
   return (
     <DashboardLayout role="admin">
       <Topbar
@@ -26,9 +64,29 @@ export default function AdminDashboard() {
         </div>
 
         <Card title="Negocios recientes">
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-            Todavía no hay negocios cargados. Andá a "Negocios" para dar de alta el primero.
-          </p>
+          {negociosRecientes.length === 0 ? (
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+              Todavía no hay negocios cargados. Andá a "Negocios" para dar de alta el primero.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {negociosRecientes.map((n) => (
+                <div
+                  key={n.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: 14,
+                    padding: '6px 0',
+                    borderBottom: '1px solid var(--border)',
+                  }}
+                >
+                  <span>{n.nombre}</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>{n.plan}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
     </DashboardLayout>

@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabaseClient.js'
 
 const adminLinks = [
   { to: '/admin', label: 'Resumen', end: true },
@@ -14,6 +15,14 @@ const comercioLinks = [
 
 export default function Sidebar({ role }) {
   const links = role === 'admin' ? adminLinks : comercioLinks
+  const navigate = useNavigate()
+
+  async function salir() {
+    if (role === 'admin') {
+      await supabase.auth.signOut()
+    }
+    navigate('/login')
+  }
 
   return (
     <aside
@@ -55,6 +64,22 @@ export default function Sidebar({ role }) {
           </NavLink>
         ))}
       </nav>
+
+      <button
+        onClick={salir}
+        style={{
+          marginTop: 'auto',
+          background: 'transparent',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-sm)',
+          color: 'var(--text-secondary)',
+          fontSize: 13,
+          padding: '8px 10px',
+          cursor: 'pointer',
+        }}
+      >
+        Salir
+      </button>
     </aside>
   )
 }

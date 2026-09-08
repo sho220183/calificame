@@ -1,13 +1,35 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase, supabaseConfigured } from '../../lib/supabaseClient.js'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    // TODO: reemplazar por supabase.auth.signInWithPassword({ email, password })
-    // y redirigir según el rol guardado en la tabla `usuarios`.
+    setError('')
+
+    if (!supabaseConfigured) {
+      setError('Faltan las variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY en el .env')
+      return
+    }
+
+    setLoading(true)
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    setLoading(false)
+
+    if (signInError) {
+      setError('Email o contraseña incorrectos')
+      return
+    }
+
+    // Por ahora solo el panel admin está conectado; el panel comercio
+    // se conecta en la siguiente fase.
+    navigate('/admin')
   }
 
   return (
@@ -54,6 +76,7 @@ export default function Login() {
           />
           <button
             type="submit"
+            disabled={loading}
             style={{
               marginTop: 6,
               background: 'var(--accent)',
@@ -63,11 +86,15 @@ export default function Login() {
               padding: '10px 0',
               fontSize: 14,
               fontWeight: 600,
-              cursor: 'pointer',
+              cursor: loading ? 'default' : 'pointer',
+              opacity: loading ? 0.7 : 1,
             }}
           >
-            Entrar
+            {loading ? 'Entrando...' : 'Entrar'}
           </button>
+          {error && (
+            <p style={{ color: 'var(--danger)', fontSize: 13, marginTop: 2 }}>{error}</p>
+          )}
         </div>
       </form>
     </div>
