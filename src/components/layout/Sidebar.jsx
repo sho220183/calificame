@@ -1,20 +1,13 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient.js'
-
-const adminLinks = [
-  { to: '/admin', label: 'Resumen', end: true },
-  { to: '/admin/negocios', label: 'Negocios' },
-  { to: '/admin/planes', label: 'Planes y facturación' },
-]
-
-const comercioLinks = [
-  { to: '/comercio', label: 'Resumen', end: true },
-  { to: '/comercio/mi-qr', label: 'Mi QR' },
-  { to: '/comercio/feedback', label: 'Feedback privado' },
-]
+import { adminRoutes, comercioRoutes } from '../../routes.js'
 
 export default function Sidebar({ role }) {
-  const links = role === 'admin' ? adminLinks : comercioLinks
+  const links = (role === 'admin' ? adminRoutes : comercioRoutes).map((r) => ({
+    to: r.path,
+    label: r.label,
+    end: r.end,
+  }))
   const navigate = useNavigate()
 
   async function salir() {

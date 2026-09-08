@@ -18,7 +18,7 @@ export default function Feedback() {
           {respuestas.length === 0 ? (
             <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
               Todavía no recibiste feedback privado. Va a aparecer acá cuando un cliente
-              califique por debajo del umbral que definiste en "Mi QR".
+              califique por debajo del umbral que definiste en “Mi QR”.
             </p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

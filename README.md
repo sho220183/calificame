@@ -39,6 +39,37 @@ cp .env.example .env   # completar cuando exista el proyecto de Supabase
 npm run dev
 ```
 
+## Chequeos automáticos antes de pushear
+
+`npm install` deja configurado un hook de git (`.githooks/pre-push`) que antes
+de cada `git push` corre automáticamente:
+
+```bash
+npm run verify   # lint + tests + build
+```
+
+Si algo falla, el push se cancela y no llega roto a Netlify. Si necesitás
+pushear de todos modos (por ejemplo, un WIP en una rama de prueba), usá
+`git push --no-verify`.
+
+Además, cada push corre lo mismo en GitHub Actions (`.github/workflows/ci.yml`)
+como respaldo — así queda visible en GitHub aunque alguien pushee sin pasar
+por el hook local (por ejemplo, desde otra máquina donde no se corrió
+`npm install`).
+
+**Nota Windows:** si el hook no se ejecuta al pushear desde PowerShell, corré
+una vez `git config core.hooksPath .githooks` manualmente en la carpeta del
+proyecto.
+
+## Por qué existe `src/routes.js`
+
+Las rutas de cada panel están centralizadas en un solo archivo, y tanto el
+Sidebar como el router (`App.jsx`) se arman a partir de esa misma lista. Esto
+existe puntualmente porque un link del menú llegó a apuntar a una página que
+no estaba registrada en el router — con esta estructura, ese tipo de bug ya
+no puede pasar: agregar una página nueva es agregar una entrada acá, no
+tocar dos archivos por separado.
+
 Rutas disponibles:
 - `/login` — acceso
 - `/admin` y `/admin/negocios` — panel JCG

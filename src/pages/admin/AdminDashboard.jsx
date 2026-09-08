@@ -66,7 +66,7 @@ export default function AdminDashboard() {
         <Card title="Negocios recientes">
           {negociosRecientes.length === 0 ? (
             <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-              Todavía no hay negocios cargados. Andá a "Negocios" para dar de alta el primero.
+              Todavía no hay negocios cargados. Andá a “Negocios” para dar de alta el primero.
             </p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

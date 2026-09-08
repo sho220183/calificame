@@ -1,0 +1,19 @@
+#!/bin/sh
+# Corre antes de cada `git push`. Si algo falla, el push se cancela.
+# Se activa solo (via el script "prepare" de package.json) la primera vez
+# que corras `npm install` en el proyecto.
+
+echo "Revisando código antes de pushear (lint + tests + build)..."
+
+npm run verify
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ El push se canceló: hay errores de lint, tests o build sin resolver."
+  echo "   Corregilos y volvé a intentar. Si necesitás pushear igual, usá:"
+  echo "   git push --no-verify"
+  exit 1
+fi
+
+echo "✅ Todo OK, pusheando..."
+exit 0
