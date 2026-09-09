@@ -12,8 +12,10 @@ Proyecto real de Supabase creado y conectado (`calificame`, región
 `sa-east-1`). Login (con redirección según rol real), panel admin (negocios,
 resumen), panel comercio (Mi QR, Feedback privado, Resumen) y el flujo
 público de escaneo (`/r/:codigo`) ya funcionan contra datos reales. El panel
-comercio ahora también requiere sesión iniciada (antes no tenía guard). Lo
-que falta: construir Planes y facturación.
+comercio ahora también requiere sesión iniciada (antes no tenía guard). "Mi
+QR" genera la imagen real del código (no solo el link en texto), con
+colores y textos personalizables por negocio, descargable en PNG. Lo que
+falta: construir Planes y facturación.
 
 ## Estructura
 
@@ -26,6 +28,7 @@ src/
   pages/public/           Redirect.jsx -> la pantalla que ve el cliente al escanear
   pages/auth/              Login compartido
   lib/supabaseClient.js  Cliente de Supabase (lee de .env, todavía sin valores)
+  lib/qrImage.js          Genera la imagen del QR (código + textos + colores) en canvas
 supabase/migrations/
   0001_init.sql          Esquema completo: negocios, usuarios, escaneos,
                           respuestas_encuesta, y las políticas de row-level
