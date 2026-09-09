@@ -14,8 +14,9 @@ resumen), panel comercio (Mi QR, Feedback privado, Resumen) y el flujo
 público de escaneo (`/r/:codigo`) ya funcionan contra datos reales. El panel
 comercio ahora también requiere sesión iniciada (antes no tenía guard). "Mi
 QR" genera la imagen real del código (no solo el link en texto), con
-colores y textos personalizables por negocio, descargable en PNG. Lo que
-falta: construir Planes y facturación.
+colores y textos personalizables por negocio, descargable en PNG. Planes y
+facturación (admin) permite cambiar plan/estado de pago por negocio a mano,
+con historial de auditoría — todavía sin cobro online, es gestión manual.
 
 ## Estructura
 
@@ -82,10 +83,9 @@ Rutas disponibles:
 
 ## Pendiente
 
-1. Construir Planes y facturación (`/admin/planes`), hoy es un placeholder.
-2. Crear un usuario de tipo `comercio` real (hoy solo existe el admin) para
-   poder probar el panel comercio de punta a punta con una cuenta de verdad.
-3. ✅ Dominio decidido: `calificame.com.py` — falta registrarlo en NIC.py
+1. Cobro online real de los planes (hoy el estado de pago lo marca el admin
+   a mano) — requiere elegir pasarela de pago antes de encarar esto.
+2. ✅ Dominio decidido: `calificame.com.py` — falta registrarlo en NIC.py
    (con el RUC de JCG Infotech) y apuntarlo al hosting una vez que el
    sistema esté listo para producción.
 

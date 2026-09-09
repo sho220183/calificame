@@ -4,8 +4,12 @@ import Topbar from '../../components/layout/Topbar.jsx'
 import Card from '../../components/ui/Card.jsx'
 import { supabase } from '../../lib/supabaseClient.js'
 import { IconStore } from '../../components/ui/Icon.jsx'
+import { useAuth } from '../../lib/AuthContext.jsx'
+
+const ETIQUETA_ESTADO = { al_dia: 'Al día', vencido: 'Vencido' }
 
 export default function Negocios() {
+  const { session } = useAuth()
   const [negocios, setNegocios] = useState([])
   const [cargando, setCargando] = useState(true)
   const [nombre, setNombre] = useState('')
@@ -16,7 +20,7 @@ export default function Negocios() {
     setCargando(true)
     const { data, error: fetchError } = await supabase
       .from('negocios')
-      .select('id, nombre, codigo, plan, creado_en')
+      .select('id, nombre, codigo, plan, estado_pago, creado_en')
       .order('creado_en', { ascending: false })
 
     if (fetchError) {
@@ -43,9 +47,11 @@ export default function Negocios() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '')
 
-    const { error: insertError } = await supabase
+    const { data: nuevoNegocio, error: insertError } = await supabase
       .from('negocios')
       .insert({ nombre, codigo, plan })
+      .select('id')
+      .single()
 
     if (insertError) {
       setError(
@@ -55,6 +61,14 @@ export default function Negocios() {
       )
       return
     }
+
+    await supabase.from('historial_facturacion').insert({
+      negocio_id: nuevoNegocio.id,
+      plan,
+      estado_pago: 'al_dia',
+      nota: 'Alta inicial',
+      admin_id: session?.user?.id ?? null,
+    })
 
     setNombre('')
     cargarNegocios()
@@ -109,6 +123,7 @@ export default function Negocios() {
                 <tr style={{ textAlign: 'left', color: 'var(--text-secondary)' }}>
                   <th style={thStyle}>Nombre</th>
                   <th style={thStyle}>Plan</th>
+                  <th style={thStyle}>Estado de pago</th>
                   <th style={thStyle}>Código QR</th>
                 </tr>
               </thead>
@@ -118,6 +133,11 @@ export default function Negocios() {
                     <td style={tdStyle}>{n.nombre}</td>
                     <td style={tdStyle}>
                       <span className="badge badge-neutral">{n.plan}</span>
+                    </td>
+                    <td style={tdStyle}>
+                      <span className={`badge ${n.estado_pago === 'al_dia' ? 'badge-success' : 'badge-danger'}`}>
+                        {ETIQUETA_ESTADO[n.estado_pago]}
+                      </span>
                     </td>
                     <td className="tabular-nums" style={{ ...tdStyle, color: 'var(--text-secondary)' }}>
                       /r/{n.codigo}
