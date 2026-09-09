@@ -22,9 +22,7 @@ export default function Sidebar({ role }) {
   const navigate = useNavigate()
 
   async function salir() {
-    if (role === 'admin') {
-      await supabase.auth.signOut()
-    }
+    await supabase.auth.signOut()
     navigate('/login')
   }
 

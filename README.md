@@ -9,10 +9,11 @@ satisfacción.
 ## Estado actual
 
 Proyecto real de Supabase creado y conectado (`calificame`, región
-`sa-east-1`). Login, panel admin (negocios, resumen) y el flujo público de
-escaneo (`/r/:codigo`) ya funcionan contra datos reales. Lo que falta:
-terminar de conectar el panel comercio (Mi QR, Feedback privado, Resumen) y
-construir Planes y facturación.
+`sa-east-1`). Login (con redirección según rol real), panel admin (negocios,
+resumen), panel comercio (Mi QR, Feedback privado, Resumen) y el flujo
+público de escaneo (`/r/:codigo`) ya funcionan contra datos reales. El panel
+comercio ahora también requiere sesión iniciada (antes no tenía guard). Lo
+que falta: construir Planes y facturación.
 
 ## Estructura
 
@@ -78,10 +79,21 @@ Rutas disponibles:
 
 ## Pendiente
 
-1. Conectar el panel comercio a datos reales: Mi QR (código y umbral del
-   negocio logueado), Feedback privado (leer `respuestas_encuesta`) y
-   Resumen (stats reales) — mismo patrón ya usado en el panel admin.
-2. Construir Planes y facturación (`/admin/planes`), hoy es un placeholder.
+1. Construir Planes y facturación (`/admin/planes`), hoy es un placeholder.
+2. Crear un usuario de tipo `comercio` real (hoy solo existe el admin) para
+   poder probar el panel comercio de punta a punta con una cuenta de verdad.
 3. ✅ Dominio decidido: `calificame.com.py` — falta registrarlo en NIC.py
    (con el RUC de JCG Infotech) y apuntarlo al hosting una vez que el
    sistema esté listo para producción.
+
+## Ideas futuras (no urgentes, en el radar)
+
+- **QR con acceso a WiFi al final del flujo.** El mismo QR del tótem podría,
+  después de completar la encuesta de satisfacción (no antes — el orden
+  importa: primero calificación, recién después la recompensa), mostrar la
+  contraseña de WiFi del local como cierre de la pantalla de agradecimiento.
+  Da un incentivo real para que el cliente complete la encuesta en vez de
+  saltearla. Implica: un campo de configuración de WiFi por negocio (SSID +
+  password, o un perfil de red vía QR estándar `WIFI:...`) en "Mi QR", y
+  mostrar ese bloque en `Redirect.jsx` recién en la pantalla final (tanto en
+  el camino de reseña pública como en el de feedback privado).

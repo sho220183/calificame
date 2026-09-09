@@ -26,17 +26,25 @@ export default function Login() {
     }
 
     setLoading(true)
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-    setLoading(false)
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
     if (signInError) {
+      setLoading(false)
       setError('Email o contraseña incorrectos')
       return
     }
 
-    // Por ahora solo el panel admin está conectado; el panel comercio
-    // se conecta en la siguiente fase.
-    navigate('/admin')
+    const { data: usuario } = await supabase
+      .from('usuarios')
+      .select('rol')
+      .eq('id', signInData.user.id)
+      .single()
+
+    setLoading(false)
+    navigate(usuario?.rol === 'admin' ? '/admin' : '/comercio')
   }
 
   return (

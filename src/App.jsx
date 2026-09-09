@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './lib/AuthContext.jsx'
 import RequireAdmin from './components/RequireAdmin.jsx'
+import RequireAuth from './components/RequireAuth.jsx'
 import Login from './pages/auth/Login.jsx'
 import Redirect from './pages/public/Redirect.jsx'
 import { adminRoutes, comercioRoutes } from './routes.js'
@@ -27,9 +28,17 @@ export default function App() {
           />
         ))}
 
-        {/* Panel comercio — todavía con datos de ejemplo, se conecta en la siguiente fase */}
+        {/* Panel comercio — conectado a Supabase real */}
         {comercioRoutes.map(({ path, element: Element }) => (
-          <Route key={path} path={path} element={<Element />} />
+          <Route
+            key={path}
+            path={path}
+            element={
+              <RequireAuth>
+                <Element />
+              </RequireAuth>
+            }
+          />
         ))}
 
         <Route path="*" element={<Navigate to="/login" replace />} />
