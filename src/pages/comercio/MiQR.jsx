@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 import Topbar from '../../components/layout/Topbar.jsx'
 import Card from '../../components/ui/Card.jsx'
-import { IconQr, IconAlert } from '../../components/ui/Icon.jsx'
+import { IconQr, IconAlert, IconWifi } from '../../components/ui/Icon.jsx'
 import { useAuth } from '../../lib/AuthContext.jsx'
 import { supabase } from '../../lib/supabaseClient.js'
 import { dibujarQrComposicion, contrasteBajo } from '../../lib/qrImage.js'
@@ -15,6 +15,8 @@ export default function MiQR() {
   const [colorFigura, setColorFigura] = useState('#0a1723')
   const [textoSuperior, setTextoSuperior] = useState('')
   const [textoInferior, setTextoInferior] = useState('')
+  const [wifiSsid, setWifiSsid] = useState('')
+  const [wifiPassword, setWifiPassword] = useState('')
   const [guardando, setGuardando] = useState(false)
   const canvasRef = useRef(null)
 
@@ -22,7 +24,7 @@ export default function MiQR() {
     if (!negocioId) return
     supabase
       .from('negocios')
-      .select('nombre, codigo, umbral_calificacion, qr_color_fondo, qr_color_figura, qr_texto_superior, qr_texto_inferior')
+      .select('nombre, codigo, umbral_calificacion, qr_color_fondo, qr_color_figura, qr_texto_superior, qr_texto_inferior, wifi_ssid, wifi_password')
       .eq('id', negocioId)
       .single()
       .then(({ data, error }) => {
@@ -36,6 +38,8 @@ export default function MiQR() {
         setColorFigura(data.qr_color_figura)
         setTextoSuperior(data.qr_texto_superior ?? data.nombre ?? '')
         setTextoInferior(data.qr_texto_inferior ?? 'Escaneá y calificanos')
+        setWifiSsid(data.wifi_ssid ?? '')
+        setWifiPassword(data.wifi_password ?? '')
       })
   }, [negocioId])
 
@@ -224,6 +228,44 @@ export default function MiQR() {
                   Descargar PNG
                 </button>
               </div>
+            </div>
+          </Card>
+        )}
+
+        {negocio && (
+          <Card
+            title="WiFi para tus clientes"
+            action={guardando ? <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Guardando...</span> : null}
+          >
+            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 14 }}>
+              <IconWifi size={16} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>
+                Opcional. Si lo cargás, el cliente ve la red y la contraseña recién al terminar la
+                encuesta — nunca antes. Es un buen incentivo para que califique. Dejá el nombre de
+                la red vacío para no mostrar nada.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: 1, minWidth: 200 }}>
+                <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Nombre de la red (SSID)</span>
+                <input
+                  className="field"
+                  maxLength={32}
+                  value={wifiSsid}
+                  onChange={(e) => setWifiSsid(e.target.value)}
+                  onBlur={() => guardarPersonalizacion({ wifi_ssid: wifiSsid.trim() || null })}
+                />
+              </label>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 5, flex: 1, minWidth: 200 }}>
+                <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Contraseña (vacía si es red abierta)</span>
+                <input
+                  className="field"
+                  maxLength={63}
+                  value={wifiPassword}
+                  onChange={(e) => setWifiPassword(e.target.value)}
+                  onBlur={() => guardarPersonalizacion({ wifi_password: wifiPassword || null })}
+                />
+              </label>
             </div>
           </Card>
         )}

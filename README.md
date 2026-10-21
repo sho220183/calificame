@@ -17,6 +17,13 @@ QR" genera la imagen real del código (no solo el link en texto), con
 colores y textos personalizables por negocio, descargable en PNG. Planes y
 facturación (admin) permite cambiar plan/estado de pago por negocio a mano,
 con historial de auditoría — todavía sin cobro online, es gestión manual.
+"Mi QR" también permite cargar el WiFi del local (red + contraseña): el
+cliente lo ve recién al terminar la encuesta, en los dos caminos (reseña
+pública o feedback privado). El WiFi solo lo devuelve la función
+`registrar_respuesta_publica`, que primero guarda la respuesta — no viaja en
+la carga inicial de la página. Si el negocio tiene WiFi, el camino público
+ya no redirige solo a Google: muestra el WiFi y un botón "Dejar mi reseña en
+Google" (se abre en otra pestaña para no perder la clave).
 
 ## Estructura
 
@@ -91,12 +98,5 @@ Rutas disponibles:
 
 ## Ideas futuras (no urgentes, en el radar)
 
-- **QR con acceso a WiFi al final del flujo.** El mismo QR del tótem podría,
-  después de completar la encuesta de satisfacción (no antes — el orden
-  importa: primero calificación, recién después la recompensa), mostrar la
-  contraseña de WiFi del local como cierre de la pantalla de agradecimiento.
-  Da un incentivo real para que el cliente complete la encuesta en vez de
-  saltearla. Implica: un campo de configuración de WiFi por negocio (SSID +
-  password, o un perfil de red vía QR estándar `WIFI:...`) en "Mi QR", y
-  mostrar ese bloque en `Redirect.jsx` recién en la pantalla final (tanto en
-  el camino de reseña pública como en el de feedback privado).
+- ✅ ~~QR con acceso a WiFi al final del flujo~~ — implementado (migración
+  `0008_wifi_tras_encuesta.sql`).
