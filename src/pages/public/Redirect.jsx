@@ -7,7 +7,10 @@ import { LogoMark, IconCheck, IconAlert, IconWifi } from '../../components/ui/Ic
 // Flujo: busca el negocio por su código (vía función pública acotada) ->
 // registra el escaneo -> muestra la encuesta rápida -> según la
 // calificación, redirige a Google Reviews o guarda el comentario como
-// feedback privado para el negocio. Si el negocio cargó su WiFi, se muestra
+// feedback privado para el negocio. El camino privado igual termina con un
+// link a la reseña pública: las políticas de Google prohíben el "review
+// gating" (pedir reseñas solo a los clientes contentos), así que el cliente
+// insatisfecho nunca se queda sin esa opción. Si el negocio cargó su WiFi, se muestra
 // recién al final (en cualquiera de los dos caminos), como recompensa por
 // haber calificado — el WiFi solo lo devuelve la función que registra la
 // respuesta, nunca antes.
@@ -18,6 +21,7 @@ export default function Redirect() {
   const [comentario, setComentario] = useState('')
   const [enviado, setEnviado] = useState(false)
   const [wifi, setWifi] = useState(null)
+  const [prefierePublico, setPrefierePublico] = useState(false)
 
   useEffect(() => {
     async function init() {
@@ -62,6 +66,21 @@ export default function Redirect() {
 
     setWifi(await registrarRespuesta(calificacion, comentario))
     setEnviado(true)
+  }
+
+  // Calificación baja, pero el cliente elige ir directo a la reseña pública
+  // en vez de (o además de) escribir el comentario privado.
+  async function irAReseniaPublica() {
+    if (!negocio) return
+
+    const wifiDelLocal = await registrarRespuesta(calificacion, comentario)
+    if (wifiDelLocal) {
+      setWifi(wifiDelLocal)
+      setPrefierePublico(true)
+      setEnviado(true)
+    } else {
+      window.location.href = urlResenia
+    }
   }
 
   // Devuelve { ssid, password } si el negocio tiene WiFi configurado, o null.
@@ -145,6 +164,14 @@ export default function Redirect() {
           <button type="submit" className="btn btn-primary btn-block" style={{ marginTop: 14 }}>
             Enviar
           </button>
+          <button
+            type="button"
+            onClick={irAReseniaPublica}
+            className="btn btn-ghost btn-block"
+            style={{ marginTop: 8, fontSize: 13 }}
+          >
+            Prefiero dejar una reseña pública
+          </button>
         </form>
       )}
 
@@ -165,11 +192,11 @@ export default function Redirect() {
           >
             <IconCheck size={22} />
           </div>
-          <p style={{ fontSize: 15 }}>{vaAPublico ? '¡Gracias por tu calificación!' : 'Gracias por tu comentario.'}</p>
+          <p style={{ fontSize: 15 }}>{vaAPublico || prefierePublico ? '¡Gracias por tu calificación!' : 'Gracias por tu comentario.'}</p>
 
           {wifi && <WifiDelLocal ssid={wifi.ssid} password={wifi.password} />}
 
-          {vaAPublico && (
+          {(vaAPublico || prefierePublico) && (
             <a
               href={urlResenia}
               target="_blank"
@@ -178,6 +205,17 @@ export default function Redirect() {
               style={{ marginTop: 20 }}
             >
               Dejar mi reseña en Google
+            </a>
+          )}
+
+          {!vaAPublico && !prefierePublico && (
+            <a
+              href={urlResenia}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-block', marginTop: 20, fontSize: 13, color: 'var(--text-secondary)' }}
+            >
+              ¿Querés dejar también una reseña pública en Google?
             </a>
           )}
         </div>

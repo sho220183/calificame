@@ -25,6 +25,14 @@ la carga inicial de la página. Si el negocio tiene WiFi, el camino público
 ya no redirige solo a Google: muestra el WiFi y un botón "Dejar mi reseña en
 Google" (se abre en otra pestaña para no perder la clave).
 
+**Sin "review gating":** las políticas de Google prohíben pedir reseñas solo
+a los clientes contentos. Por eso el camino privado (calificación baja)
+ofrece la reseña pública en dos lugares: un botón "Prefiero dejar una reseña
+pública" en el formulario del comentario (no hace falta escribir nada) y un
+link "¿Querés dejar también una reseña pública?" después de enviarlo. El
+comercio recibe primero la calificación, pero el cliente nunca se queda sin
+la opción pública. No sacar esas opciones.
+
 ## Estructura
 
 ```

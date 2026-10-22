@@ -69,6 +69,32 @@ describe('Redirect — WiFi tras la encuesta', () => {
     expect(screen.getByText('Dejar mi reseña en Google').closest('a')).toHaveAttribute('href', negocio.url_resenia)
   })
 
+  it('camino privado: después del comentario ofrece igual la reseña pública (sin review gating)', async () => {
+    mockRpc({ wifi_ssid: null, wifi_password: null })
+    renderPagina()
+    fireEvent.click(await screen.findByLabelText('Calificar 2 de 5'))
+    expect(screen.queryByText(/reseña pública en Google/)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByText('Enviar'))
+    const link = await screen.findByText(/reseña pública en Google/)
+    expect(link.closest('a')).toHaveAttribute('href', negocio.url_resenia)
+  })
+
+  it('camino privado: puede elegir ir directo a la reseña pública sin escribir comentario', async () => {
+    mockRpc({ wifi_ssid: 'MiLocal', wifi_password: 'secreta123' })
+    renderPagina()
+    fireEvent.click(await screen.findByLabelText('Calificar 2 de 5'))
+    fireEvent.click(screen.getByText('Prefiero dejar una reseña pública'))
+
+    expect(await screen.findByText('MiLocal')).toBeInTheDocument()
+    expect(screen.getByText('Dejar mi reseña en Google').closest('a')).toHaveAttribute('href', negocio.url_resenia)
+    expect(rpc).toHaveBeenCalledWith('registrar_respuesta_publica', {
+      p_codigo: 'abc',
+      p_calificacion: 2,
+      p_comentario: '',
+    })
+  })
+
   it('camino privado sin WiFi configurado: solo agradece', async () => {
     mockRpc({ wifi_ssid: null, wifi_password: null })
     renderPagina()

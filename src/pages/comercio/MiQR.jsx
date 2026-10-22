@@ -276,7 +276,8 @@ export default function MiQR() {
         >
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 14 }}>
             A partir de esta calificación, el cliente va directo a tu reseña pública en Google. Por
-            debajo, el comentario queda como feedback privado, visible solo para vos.
+            debajo, primero te deja un comentario privado, visible solo para vos — y después igual
+            puede elegir dejar una reseña pública (Google no permite ocultarle esa opción).
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <input
