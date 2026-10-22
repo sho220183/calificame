@@ -73,7 +73,7 @@ export default function Redirect() {
   async function irAReseniaPublica() {
     if (!negocio) return
 
-    const wifiDelLocal = await registrarRespuesta(calificacion, comentario)
+    const wifiDelLocal = await registrarRespuesta(calificacion, comentario, true)
     if (wifiDelLocal) {
       setWifi(wifiDelLocal)
       setPrefierePublico(true)
@@ -84,11 +84,13 @@ export default function Redirect() {
   }
 
   // Devuelve { ssid, password } si el negocio tiene WiFi configurado, o null.
-  async function registrarRespuesta(valor, texto) {
+  // prefierePublico: calificación baja, pero el cliente eligió ir a Google.
+  async function registrarRespuesta(valor, texto, prefierePublico = false) {
     const { data, error } = await supabase.rpc('registrar_respuesta_publica', {
       p_codigo: codigo,
       p_calificacion: valor,
       p_comentario: texto,
+      p_prefiere_publico: prefierePublico,
     })
     const fila = !error && data?.[0]
     return fila?.wifi_ssid ? { ssid: fila.wifi_ssid, password: fila.wifi_password ?? '' } : null

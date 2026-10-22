@@ -57,6 +57,7 @@ describe('Redirect — WiFi tras la encuesta', () => {
       p_codigo: 'abc',
       p_calificacion: 2,
       p_comentario: 'Tardaron',
+      p_prefiere_publico: false,
     })
   })
 
@@ -92,6 +93,7 @@ describe('Redirect — WiFi tras la encuesta', () => {
       p_codigo: 'abc',
       p_calificacion: 2,
       p_comentario: '',
+      p_prefiere_publico: true,
     })
   })
 
