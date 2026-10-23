@@ -33,6 +33,15 @@ link "¿Querés dejar también una reseña pública?" después de enviarlo. El
 comercio recibe primero la calificación, pero el cliente nunca se queda sin
 la opción pública. No sacar esas opciones.
 
+**Pago vencido:** cuando el admin marca un negocio como `vencido`, arrancan
+7 días de gracia (el comercio ve un aviso con la fecha límite). Pasados esos
+días, el panel del comercio deja de mostrar Resumen y Feedback hasta que el
+admin lo vuelva a marcar `al_dia`. El QR y la encuesta **siguen funcionando**
+y las respuestas se siguen guardando: el cliente del local no nota nada, y
+al regularizar el comercio recupera todo. El bloqueo lo aplica la base (RLS),
+no solo la pantalla. Los 7 días están definidos en un único lugar: la función
+SQL `bloqueo_el` (migración `0011_bloqueo_por_pago_vencido.sql`).
+
 ## Estructura
 
 ```
@@ -95,6 +104,23 @@ Rutas disponibles:
 - `/admin` y `/admin/negocios` — panel JCG
 - `/comercio`, `/comercio/mi-qr`, `/comercio/feedback` — panel del negocio
 - `/r/:codigo` — la página pública que ve el cliente al escanear el QR (encuesta + redirección)
+
+## En pruebas (pendiente de validar en uso real)
+
+Implementado, aplicado en Supabase y probado con datos simulados, pero
+todavía sin recorrer de punta a punta en el navegador:
+
+- [ ] WiFi tras la encuesta: cargar red/clave en "Mi QR", escanear y
+      calificar alto y bajo; el WiFi aparece recién al final.
+- [ ] Sin review gating: con calificación baja, probar "Prefiero dejar una
+      reseña pública" y el link después de enviar el comentario.
+- [ ] Pago vencido: marcar un negocio `vencido` en Planes y ver el aviso
+      amarillo en el panel comercio; para probar el bloqueo sin esperar 7
+      días, correr en el SQL editor
+      `update negocios set vencido_desde = now() - interval '8 days' where codigo = '...'`
+      y ver el aviso rojo + Resumen/Feedback bloqueados; volver a `al_dia`.
+- [ ] Resumen del admin: la cifra de reseñas ahora debería contar las reales
+      (antes el admin no podía leer respuestas_encuesta y siempre daba 0).
 
 ## Pendiente
 

@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card.jsx'
 import { IconScan, IconStar, IconMessage, IconInbox } from '../../components/ui/Icon.jsx'
 import { useAuth } from '../../lib/AuthContext.jsx'
 import { supabase } from '../../lib/supabaseClient.js'
+import { RequiereCuentaAlDia } from '../../components/CuentaComercio.jsx'
 
 export default function ComercioDashboard() {
   const { negocioId } = useAuth()
@@ -64,48 +65,50 @@ export default function ComercioDashboard() {
     <DashboardLayout role="comercio">
       <Topbar title="Resumen" subtitle="Actividad de tu QR" accountLabel="Mi negocio" />
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-          {resumen.map((item) => (
-            <StatCard key={item.label} {...item} />
-          ))}
-        </div>
+        <RequiereCuentaAlDia>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            {resumen.map((item) => (
+              <StatCard key={item.label} {...item} />
+            ))}
+          </div>
 
-        <Card title="Últimos escaneos">
-          {escaneosRecientes.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '20px 0' }}>
-              <IconInbox size={26} style={{ color: 'var(--text-muted)', marginBottom: 10 }} />
-              <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: 0 }}>
-                Todavía no hay actividad registrada. En cuanto alguien escanee tu QR, vas a ver el
-                detalle acá.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {escaneosRecientes.map((e) => (
-                <div
-                  key={e.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: 14,
-                    padding: '10px 2px',
-                    borderBottom: '1px solid var(--border)',
-                  }}
-                >
-                  <span style={{ color: 'var(--text-secondary)' }}>Escaneo de QR</span>
-                  <span className="tabular-nums" style={{ color: 'var(--text-muted)', fontSize: 13 }}>
-                    {new Date(e.creado_en).toLocaleDateString('es-PY', {
-                      day: '2-digit',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
+          <Card title="Últimos escaneos">
+            {escaneosRecientes.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                <IconInbox size={26} style={{ color: 'var(--text-muted)', marginBottom: 10 }} />
+                <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: 0 }}>
+                  Todavía no hay actividad registrada. En cuanto alguien escanee tu QR, vas a ver el
+                  detalle acá.
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {escaneosRecientes.map((e) => (
+                  <div
+                    key={e.id}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: 14,
+                      padding: '10px 2px',
+                      borderBottom: '1px solid var(--border)',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-secondary)' }}>Escaneo de QR</span>
+                    <span className="tabular-nums" style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+                      {new Date(e.creado_en).toLocaleDateString('es-PY', {
+                        day: '2-digit',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </RequiereCuentaAlDia>
       </div>
     </DashboardLayout>
   )

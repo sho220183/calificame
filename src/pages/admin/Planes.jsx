@@ -5,6 +5,7 @@ import Card from '../../components/ui/Card.jsx'
 import { IconCard } from '../../components/ui/Icon.jsx'
 import { useAuth } from '../../lib/AuthContext.jsx'
 import { supabase } from '../../lib/supabaseClient.js'
+import { estadoDeCuenta } from '../../lib/estadoCuenta.js'
 
 const ETIQUETA_ESTADO = { al_dia: 'Al día', vencido: 'Vencido' }
 
@@ -22,7 +23,7 @@ export default function Planes() {
   async function cargarNegocios() {
     const { data, error: fetchError } = await supabase
       .from('negocios')
-      .select('id, nombre, plan, estado_pago')
+      .select('id, nombre, plan, estado_pago, bloqueo_el')
       .order('nombre', { ascending: true })
     setNegocios(fetchError ? [] : data)
   }
@@ -128,6 +129,7 @@ export default function Planes() {
                         <span className={`badge ${n.estado_pago === 'al_dia' ? 'badge-success' : 'badge-danger'}`}>
                           {ETIQUETA_ESTADO[n.estado_pago]}
                         </span>
+                        <DetalleVencimiento negocio={n} />
                       </td>
                       <td style={{ ...tdStyle, textAlign: 'right' }}>
                         <button onClick={() => abrirNegocio(n)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>
@@ -255,3 +257,17 @@ export default function Planes() {
 
 const thStyle = { padding: '8px 6px', fontWeight: 500 }
 const tdStyle = { padding: '10px 6px' }
+
+// Para negocios vencidos: si todavía están en gracia (y hasta cuándo) o si el
+// panel del comercio ya está bloqueado.
+function DetalleVencimiento({ negocio }) {
+  const { estado, bloqueoEl } = estadoDeCuenta(negocio)
+  if (estado === 'al_dia') return null
+  return (
+    <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 4 }}>
+      {estado === 'bloqueado'
+        ? 'Panel bloqueado'
+        : `Gracia hasta el ${bloqueoEl.toLocaleDateString('es-PY', { day: '2-digit', month: 'short' })}`}
+    </div>
+  )
+}
